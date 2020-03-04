@@ -14,6 +14,11 @@
 
 > [CID](https://github.com/ipld/cid) implementation in Rust.
 
+**It's a fork version of the upstream repo**.
+
+Changes (disabled by default, enabled by the `impl-serde` feature):
+- Implement serialization/deserialization of ipld_dag_cbor and ipld_dag_json format based on serde ecosystem.
+
 ## Table of Contents
 
 - [Install](#install)
