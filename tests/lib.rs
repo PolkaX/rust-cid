@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::convert::{TryFrom, TryInto};
 use std::str::FromStr;
 
-use cid::{Cid, Codec, Error, Version};
+use cid::{Cid, Codec, Error, IntoExt, Version};
 use multibase::Base;
 use multihash::Sha2_256;
 
@@ -10,7 +10,7 @@ use multihash::Sha2_256;
 fn basic_marshalling() {
     let h = Sha2_256::digest(b"beep boop");
 
-    let cid = Cid::new_v1(Codec::DagProtobuf, h);
+    let cid = Cid::new_v1(Codec::DagProtobuf, h.into_ext());
 
     let data = cid.to_bytes();
     let out = Cid::try_from(data.clone()).unwrap();
@@ -80,7 +80,7 @@ fn test_hash() {
     let data: Vec<u8> = vec![1, 2, 3];
     let hash = Sha2_256::digest(&data);
     let mut map = HashMap::new();
-    let cid = Cid::new_v0(hash).unwrap();
+    let cid = Cid::new_v0(hash.into_ext()).unwrap();
     map.insert(cid.clone(), data.clone());
     assert_eq!(&data, map.get(&cid).unwrap());
 }
@@ -90,20 +90,20 @@ fn test_base32() {
     let cid = Cid::from_str("bafkreibme22gw2h7y2h7tg2fhqotaqjucnbc24deqo72b6mkl2egezxhvy").unwrap();
     assert_eq!(cid.version(), Version::V1);
     assert_eq!(cid.codec(), Codec::Raw);
-    assert_eq!(cid.hash(), Sha2_256::digest(b"foo"));
+    assert_eq!(cid.hash(), Sha2_256::digest(b"foo").into_ext());
 }
 
 #[test]
 fn to_string() {
     let expected_cid = "bafkreibme22gw2h7y2h7tg2fhqotaqjucnbc24deqo72b6mkl2egezxhvy";
-    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo"));
+    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo").into_ext());
     assert_eq!(cid.to_string(), expected_cid);
 }
 
 #[test]
 fn to_string_of_base32() {
     let expected_cid = "bafkreibme22gw2h7y2h7tg2fhqotaqjucnbc24deqo72b6mkl2egezxhvy";
-    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo"));
+    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo").into_ext());
     assert_eq!(
         cid.to_string_of_base(Base::Base32Lower).unwrap(),
         expected_cid
@@ -113,14 +113,14 @@ fn to_string_of_base32() {
 #[test]
 fn to_string_of_base64() {
     let expected_cid = "mAVUSICwmtGto/8aP+ZtFPB0wQTQTQi1wZIO/oPmKXohiZueu";
-    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo"));
+    let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo").into_ext());
     assert_eq!(cid.to_string_of_base(Base::Base64).unwrap(), expected_cid);
 }
 
 #[test]
 fn to_string_of_base58_v0() {
     let expected_cid = "QmRJzsvyCQyizr73Gmms8ZRtvNxmgqumxc2KUp71dfEmoj";
-    let cid = Cid::new_v0(Sha2_256::digest(b"foo")).unwrap();
+    let cid = Cid::new_v0(Sha2_256::digest(b"foo").into_ext()).unwrap();
     assert_eq!(
         cid.to_string_of_base(Base::Base58Btc).unwrap(),
         expected_cid
@@ -129,7 +129,7 @@ fn to_string_of_base58_v0() {
 
 #[test]
 fn to_string_of_base_v0_error() {
-    let cid = Cid::new_v0(Sha2_256::digest(b"foo")).unwrap();
+    let cid = Cid::new_v0(Sha2_256::digest(b"foo").into_ext()).unwrap();
     assert_eq!(
         cid.to_string_of_base(Base::Base16Upper),
         Err(Error::InvalidCidV0Base)

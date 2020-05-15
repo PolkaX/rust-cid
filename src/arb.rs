@@ -5,6 +5,7 @@ use quickcheck::{Arbitrary, Gen};
 use rand::seq::SliceRandom;
 use rand::Rng;
 
+use crate::multihash::IntoExt;
 use crate::{Cid, Codec, Version};
 
 const CODECS: [Codec; 18] = [
@@ -59,11 +60,11 @@ impl Arbitrary for Cid {
         if version == Version::V0 {
             let data: Vec<u8> = Arbitrary::arbitrary(g);
             let hash = multihash::Sha2_256::digest(&data);
-            Cid::new_v0(hash).expect("sha2_256 is a valid hash for cid v0")
+            Cid::new_v0(hash.into_ext()).expect("sha2_256 is a valid hash for cid v0")
         } else {
             let codec: Codec = Arbitrary::arbitrary(g);
             let hash: Multihash = Arbitrary::arbitrary(g);
-            Cid::new_v1(codec, hash)
+            Cid::new_v1(codec, hash.into_ext())
         }
     }
 }

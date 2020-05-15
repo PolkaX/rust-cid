@@ -7,6 +7,7 @@
 mod cid;
 mod codec;
 mod error;
+mod multihash; // provide extensional multihash
 mod version;
 
 #[cfg(any(test, feature = "test"))]
@@ -15,6 +16,10 @@ mod arb;
 pub use self::cid::{Cid, CidGeneric};
 pub use self::codec::Codec;
 pub use self::error::{Error, Result};
+pub use self::multihash::{
+    ExtCode, ExtMultihash, ExtMultihashRef, FilecoinMultihashCode, FilecoinSealedV1,
+    FilecoinUnsealedV1, IntoExt,
+};
 pub use self::version::Version;
 
 #[cfg(any(feature = "cbor", feature = "json"))]

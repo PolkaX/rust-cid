@@ -6,10 +6,11 @@ use unsigned_varint::{decode as varint_decode, encode as varint_encode};
 
 use crate::codec::Codec;
 use crate::error::{Error, Result};
+use crate::multihash::ExtCode;
 use crate::version::Version;
 
 /// A CID with the default Multihash code table
-pub type Cid = CidGeneric<Codec, Code>;
+pub type Cid = CidGeneric<Codec, ExtCode>;
 
 /// Representation of a CID.
 ///
@@ -122,11 +123,11 @@ where
     /// # Example
     ///
     /// ```
-    /// use cid::{Cid, Codec};
+    /// use cid::{Cid, Codec, IntoExt};
     /// use multibase::Base;
     /// use multihash::Sha2_256;
     ///
-    /// let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo"));
+    /// let cid = Cid::new_v1(Codec::Raw, Sha2_256::digest(b"foo").into_ext());
     /// let encoded = cid.to_string_of_base(Base::Base64).unwrap();
     /// assert_eq!(encoded, "mAVUSICwmtGto/8aP+ZtFPB0wQTQTQi1wZIO/oPmKXohiZueu");
     /// ```
